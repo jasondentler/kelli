@@ -16,7 +16,6 @@ namespace KelliPokerPlanning.Controllers
             var values = new[] {"XS", "S", "M", "L", "XL", "2X"};
             return View(new PokerSetup()
                             {
-                                Session = Guid.NewGuid(),
                                 Values = string.Join(Environment.NewLine, values),
                                 IncludeQuestion = true,
                                 IncludeInfinity = true

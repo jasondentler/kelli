@@ -1,21 +1,22 @@
-﻿@model PokerSetup 
+﻿@model Authentication
 @{
-    ViewBag.Title = "Planning Poker";
+    ViewBag.Title = "Kelli Planning Poker";
 }
-<h2>@ViewBag.Title</h2>
+<p>
+    To begin a poker planning session, log in with your StackExchange (StackOverflow,
+    ServerFault, etc) account. You will be the moderator. Your team can join as estimators
+    without a StackExchange account. You can also join as an estimator from another
+    browser tab or client.
+</p>
+<p>
+    Note: Only the moderator needs a StackExchange account.
+</p>
+
 @using (Html.BeginForm<HomeController>(c => c.Index(null)))
 {
     <div>
-        @Html.LabelFor(m => m.Values, "Values (one per line)")<br/>
-        @Html.TextAreaFor(m => m.Values, 10, 100, null)
+        @Html.LabelFor(m => m.Id, "StackExchange user name"):
+        @Html.TextBoxFor(m => m.Id)
     </div>
-    <div>
-        @Html.CheckBoxFor(m => m.IncludeQuestion)
-        @Html.LabelFor(m => m.IncludeQuestion, "Include Question Mark")
-    </div>                      
-    <div>
-        @Html.CheckBoxFor(m => m.IncludeInfinity)
-        @Html.LabelFor(m => m.IncludeInfinity, "Include Infinity")
-    </div>
-    @Html.SubmitButton("Submit", "Start Session")
+    @Html.SubmitButton("submit", "Fake the authentication")
 }

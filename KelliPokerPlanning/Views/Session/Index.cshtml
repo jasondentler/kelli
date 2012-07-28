@@ -1,0 +1,21 @@
+﻿@model PokerSetup 
+@{
+    ViewBag.Title = "Start A Session";
+}
+<h2>@ViewBag.Title</h2>
+@using (Html.BeginForm<SessionController>(c => c.Index(Model.Id)))
+{
+    <div>
+        @Html.LabelFor(m => m.Values, "Values (one per line)")<br/>
+        @Html.TextAreaFor(m => m.Values, 10, 100, null)
+    </div>
+    <div>
+        @Html.CheckBoxFor(m => m.IncludeQuestion)
+        @Html.LabelFor(m => m.IncludeQuestion, "Include Question Mark")
+    </div>                      
+    <div>
+        @Html.CheckBoxFor(m => m.IncludeInfinity)
+        @Html.LabelFor(m => m.IncludeInfinity, "Include Infinity")
+    </div>
+    @Html.SubmitButton("Submit", "Start Session")
+}

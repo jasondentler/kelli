@@ -8,26 +8,19 @@ namespace KelliPokerPlanning.Controllers
 {
     public class HomeController : Controller
     {
-        //
-        // GET: /Home/
+
         [HttpGet, ModelStateToTempData]
         public ViewResult Index()
         {
-            var values = new[] {"XS", "S", "M", "L", "XL", "2X"};
-            return View(new PokerSetup()
-                            {
-                                Values = string.Join(Environment.NewLine, values),
-                                IncludeQuestion = true,
-                                IncludeInfinity = true
-                            });
+            return View();
         }
 
         [HttpPost, ModelStateToTempData]
-        public RedirectToRouteResult Index(PokerSetup model)
+        public RedirectToRouteResult Index(Authentication model)
         {
             if (!ModelState.IsValid)
                 return this.RedirectToAction(c => c.Index());
-            return this.RedirectToAction(c => c.Index());
+            return this.RedirectToAction<SessionController>(c => c.Index(model.Id));
         }
 
     }

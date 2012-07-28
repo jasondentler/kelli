@@ -86,6 +86,9 @@ UpgradeLog*.XML
 # Resharper
 _Resharper.*
 
+# NuGet Packages
+[Pp]ackages
+
 ############
 ## Windows
 ############

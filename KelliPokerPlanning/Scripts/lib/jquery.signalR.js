@@ -7,7 +7,7 @@
 * https://github.com/SignalR/SignalR/blob/master/LICENSE.md
 */
 
-/// <reference path="jquery-1.6.2.js" />
+/// <reference path="jquery" />
 (function ($, window) {
     /// <param name="$" type="jQuery" />
     "use strict";

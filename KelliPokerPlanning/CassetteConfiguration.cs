@@ -14,11 +14,12 @@ namespace KelliPokerPlanning
             // TODO: Configure your bundles here...
             // Please read http://getcassette.net/documentation/configuration
 
-            // This default configuration treats each file as a separate 'bundle'.
-            // In production the content will be minified, but the files are not combined.
-            // So you probably want to tweak these defaults!
             bundles.AddPerIndividualFile<StylesheetBundle>("Content");
-            bundles.AddPerIndividualFile<ScriptBundle>("Scripts");
+            bundles.AddPerSubDirectory<ScriptBundle>("Scripts");
+
+
+            bundles.AddUrlWithAlias<ScriptBundle>("/signalr/hubs", "signalr", b => b.AddReference("~/Scripts/lib/jquery.signalR.js"));
+
 
             // To combine files, try something like this instead:
             //   bundles.Add<StylesheetBundle>("Content");

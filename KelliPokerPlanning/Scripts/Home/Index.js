@@ -5,6 +5,8 @@ $(function () {
 
     var userNameId = '#' + pageData.userNameId;
 
+    $(userNameId).focus();
+
     var onUserNameChanged = function () {
         var userName = $(userNameId).val();
         console.log('User name is ' + userName);
@@ -13,7 +15,7 @@ $(function () {
             .done(function (data) {
                 if (data.userName != $(userNameId).val())
                     return;
-                
+
                 $(userNameId).removeClass("invalid");
                 $(userNameId).removeClass("unavailable");
 

@@ -2,8 +2,9 @@
 @{
     ViewBag.Title = "Start A Session";
 }
-@using (Html.BeginForm<SessionController>(c => c.Index(Model.Id)))
+@using (Html.BeginForm<SessionController>(c => c.Index(Model.UserName)))
 {
+    @Html.HiddenFor(m => m.UserName)
     <div>
         @Html.LabelFor(m => m.Values, "Values (one per line)")<br/>
         @Html.TextAreaFor(m => m.Values, 10, 100, null)

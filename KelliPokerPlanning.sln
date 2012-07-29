@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{EC7AFB
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KelliPokerPlanning.Raven", "KelliPokerPlanning.Raven\KelliPokerPlanning.Raven.csproj", "{BBA47D2E-AF74-4B47-911C-9E0C6DA5840C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KelliPokerPlanning.Core", "KelliPokerPlanning.Core\KelliPokerPlanning.Core.csproj", "{5CBA226C-CB36-4A69-968A-F64168A98A06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{DE377D91-6B1B-4101-B0E5-FB19C1D9F41D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE377D91-6B1B-4101-B0E5-FB19C1D9F41D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE377D91-6B1B-4101-B0E5-FB19C1D9F41D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBA47D2E-AF74-4B47-911C-9E0C6DA5840C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBA47D2E-AF74-4B47-911C-9E0C6DA5840C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBA47D2E-AF74-4B47-911C-9E0C6DA5840C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBA47D2E-AF74-4B47-911C-9E0C6DA5840C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CBA226C-CB36-4A69-968A-F64168A98A06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CBA226C-CB36-4A69-968A-F64168A98A06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CBA226C-CB36-4A69-968A-F64168A98A06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CBA226C-CB36-4A69-968A-F64168A98A06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

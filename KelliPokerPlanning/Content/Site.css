@@ -73,3 +73,13 @@ textarea
 {
     display: none;
 }
+
+#userNameContainer .unavailable 
+{
+	background-color: yellow;
+}
+#userNameContainer .invalid 
+{
+	background-color: red;
+}
+

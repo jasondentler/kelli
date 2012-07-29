@@ -19,7 +19,7 @@
 
 @using (Html.BeginForm<HomeController>(c => c.Index(null)))
 {
-    <div>
+    <div id="userNameContainer">
         @Html.LabelFor(m => m.UserName, "StackExchange user name"):
         @Html.TextBoxFor(m => m.UserName)
     </div>

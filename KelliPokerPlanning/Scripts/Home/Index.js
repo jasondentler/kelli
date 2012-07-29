@@ -1,18 +1,36 @@
 ﻿/// <reference path="~/signalr"/>
 $(function () {
     // Proxy created on the fly
-    var chat = $.connection.setupHub;
+    var setup = $.connection.setupHub;
 
-    // Declare a function on the chat hub so the server can invoke it
-    chat.addMessage = function (message) {
-        $('#messages').append('<li>' + message + '</li>');
+    var userNameId = '#' + pageData.userNameId;
+
+    var onUserNameChanged = function () {
+        var userName = $(userNameId).val();
+        console.log('User name is ' + userName);
+
+        setup.isValidAndAvailable(userName)
+            .done(function (data) {
+                if (data.userName != $(userNameId).val())
+                    return;
+                
+                $(userNameId).removeClass("invalid");
+                $(userNameId).removeClass("unavailable");
+
+                if (!data.isValid)
+                    $(userNameId).addClass("invalid");
+
+                if (!data.isAvailable)
+                    $(userNameId).addClass("unavailable");
+            });
     };
 
-    $("#broadcast").click(function () {
-        // Call the chat method on the server
-        chat.send($('#msg').val());
-    });
 
     // Start the connection
-    $.connection.hub.start();
+    $.connection.hub.start()
+        .done(function () {
+            $(userNameId).bind('input', onUserNameChanged);
+            onUserNameChanged();
+        });
+
 });

@@ -20,7 +20,7 @@ namespace KelliPokerPlanning.Controllers
         {
             if (!ModelState.IsValid)
                 return this.RedirectToAction(c => c.Index());
-            return this.RedirectToAction<SessionController>(c => c.Index(model.Id));
+            return this.RedirectToAction<SessionController>(c => c.Index(model.UserName));
         }
 
     }

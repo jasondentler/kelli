@@ -2,6 +2,10 @@
 @{
     ViewBag.Title = "Kelli Planning Poker";
     Bundles.Reference("~/Scripts/Home/Index.js");
+    Bundles.AddPageData("pageData", new
+                                        {
+                                            userNameId = Html.IdFor(m => m.UserName).ToHtmlString()
+                                        });
 }
 <p>
     To begin a poker planning session, log in with your StackExchange (StackOverflow,
@@ -16,7 +20,7 @@
 @using (Html.BeginForm<HomeController>(c => c.Index(null)))
 {
     <div>
-        @Html.LabelFor(m => m.Id, "StackExchange user name"):
-        @Html.TextBoxFor(m => m.Id)
+        @Html.LabelFor(m => m.UserName, "StackExchange user name"):
+        @Html.TextBoxFor(m => m.UserName)
     </div>
 }

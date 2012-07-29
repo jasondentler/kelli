@@ -8,7 +8,7 @@ namespace KelliPokerPlanning.Models
     public class Authentication
     {
 
-        public string Id { get; set; }
+        public string UserName { get; set; }
 
     }
 }

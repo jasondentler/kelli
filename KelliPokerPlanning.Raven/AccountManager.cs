@@ -34,6 +34,16 @@ namespace KelliPokerPlanning
             return settings.Id;
         }
 
+        public bool IsValid(string userName)
+        {
+            return !string.IsNullOrWhiteSpace(userName);
+        }
+
+        public bool IsAvailable(string userName)
+        {
+            userName = userName.ToLowerInvariant();
+            return !_session.Query<Settings>().Any(s => s.UserName == userName);
+        }
     }    
 
 

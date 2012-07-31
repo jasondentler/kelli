@@ -22,14 +22,14 @@ namespace KelliPokerPlanning
                        };
         }
 
-        private static bool IsValid(string userName)
+        private bool IsValid(string userName)
         {
-            return !string.IsNullOrWhiteSpace(userName);
+            return _accountManager.IsValid(userName);
         }
 
-        private static bool IsAvailable(string userName)
+        private bool IsAvailable(string userName)
         {
-            return userName.ToLowerInvariant() != "jason";
+            return _accountManager.IsAvailable(userName);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Ninject.Modules;
 
-namespace KelliPokerPlanning
+namespace KelliPokerPlanning.App_Start
 {
     public class ManagerModule : NinjectModule 
     {

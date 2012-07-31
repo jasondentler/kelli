@@ -44,7 +44,6 @@ namespace KelliPokerPlanning.App_Start
             var kernel = new StandardKernel();
             kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
             kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
-            
             RegisterServices(kernel);
             return kernel;
         }
@@ -55,8 +54,7 @@ namespace KelliPokerPlanning.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            var asm = typeof (RavenModule).Assembly;
-            kernel.Load(asm);
+            kernel.Load(Assembly.GetExecutingAssembly());
         }        
     }
 }

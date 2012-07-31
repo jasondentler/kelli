@@ -43,7 +43,7 @@ namespace KelliPokerPlanning.Controllers
         }
 
         [HttpPost, ModelStateToTempData]
-        public RedirectToRouteResult Index(PokerSetup model)
+        public ActionResult Index(PokerSetup model)
         {
             if (!ModelState.IsValid)
                 return this.RedirectToAction(c => c.Index(model.UserName));
@@ -55,7 +55,7 @@ namespace KelliPokerPlanning.Controllers
 
             var documentId = _accountManager.Create(model.UserName, values, model.IncludeQuestion, model.IncludeInfinity);
 
-            throw new ApplicationException(string.Format("Id is {0}", documentId));
+            return Content("OK");
         }
 
     }

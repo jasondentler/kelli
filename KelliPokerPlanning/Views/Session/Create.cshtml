@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Start A Session";
 }
-@using (Html.BeginForm<SessionController>(c => c.Index(Model.UserName)))
+@using (Html.BeginForm<SessionController>(c => c.Create(Model.UserName)))
 {
     @Html.HiddenFor(m => m.UserName)
     <div>

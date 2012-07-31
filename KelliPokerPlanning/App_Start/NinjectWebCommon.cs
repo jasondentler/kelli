@@ -1,4 +1,5 @@
 using System.Reflection;
+using SignalR.Ninject;
 
 [assembly: WebActivator.PreApplicationStartMethod(typeof(KelliPokerPlanning.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivator.ApplicationShutdownMethodAttribute(typeof(KelliPokerPlanning.App_Start.NinjectWebCommon), "Stop")]
@@ -44,6 +45,9 @@ namespace KelliPokerPlanning.App_Start
             var kernel = new StandardKernel();
             kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
             kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
+
+            SignalR.Hosting.AspNet.AspNetHost.SetResolver(new NinjectDependencyResolver(kernel));
+            
             RegisterServices(kernel);
             return kernel;
         }

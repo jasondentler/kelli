@@ -19,6 +19,13 @@ namespace KelliPokerPlanning.Controllers
         [HttpGet, ModelStateToTempData]
         public ViewResult Index(string id)
         {
+            return View(model:id);
+        }
+
+
+        [HttpGet, ModelStateToTempData]
+        public ViewResult Create(string id)
+        {
 
             var settings = _accountManager.GetAccountSettings(id);
             if (settings != null)
@@ -43,10 +50,10 @@ namespace KelliPokerPlanning.Controllers
         }
 
         [HttpPost, ModelStateToTempData]
-        public ActionResult Index(PokerSetup model)
+        public RedirectToRouteResult Create(PokerSetup model)
         {
             if (!ModelState.IsValid)
-                return this.RedirectToAction(c => c.Index(model.UserName));
+                return this.RedirectToAction(c => c.Create(model.UserName));
 
             var values = (model.Values ?? "")
                 .Split(Environment.NewLine.ToCharArray())
@@ -55,7 +62,7 @@ namespace KelliPokerPlanning.Controllers
 
             var documentId = _accountManager.Create(model.UserName, values, model.IncludeQuestion, model.IncludeInfinity);
 
-            return Content("OK");
+            return this.RedirectToAction(c => c.Index(model.UserName));
         }
 
     }

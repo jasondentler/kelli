@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -64,7 +65,7 @@ namespace KelliPokerPlanning
                                UserId = 837001
                            };
 
-            var url = "https://api.stackexchange.com/2.0/me";
+            const string url = "https://api.stackexchange.com/2.0/me";
             var parms = new Dictionary<string, string>()
                             {
                                 {"access_token", accessToken},
@@ -75,32 +76,36 @@ namespace KelliPokerPlanning
                                 {"sort", "reputation"}
                             };
 
-            var wc = new WebClient();
-            wc.Headers[HttpRequestHeader.Accept] = "application/json, text/javascript, */*; q=0.01";
-
-            parms.ToList().ForEach(kv => wc.QueryString[kv.Key] = kv.Value);
-            var data = wc.DownloadString(url);
-
-            if (string.IsNullOrWhiteSpace(data))
-                return null;
-
-            var results = JsonConvert.DeserializeObject<UsersResult>(data);
-
-            if (results == null)
-                return null;
-
-            var user = results.items.SingleOrDefault(i => i.user_id == userId);
-
-            if (user == null)
-                return null;
-
-            return new User()
+            using (var wc = new WebClient())
             {
-                AvatarUrl = user.profile_image,
-                DisplayName = user.display_name,
-                SiteAPIName = siteApiName,
-                UserId = user.user_id
-            };
+                wc.Headers[HttpRequestHeader.Accept] = "application/json, text/javascript, */*; q=0.01";
+
+                parms.ToList().ForEach(kv => wc.QueryString[kv.Key] = kv.Value);
+                var data = wc.DownloadString(url);
+
+                Debug.WriteLine(data);
+
+                if (string.IsNullOrWhiteSpace(data))
+                    return null;
+
+                var results = JsonConvert.DeserializeObject<UsersResult>(data);
+
+                if (results == null)
+                    return null;
+
+                var user = results.items.SingleOrDefault(i => i.user_id == userId);
+
+                if (user == null)
+                    return null;
+
+                return new User()
+                           {
+                               AvatarUrl = user.profile_image,
+                               DisplayName = user.display_name,
+                               SiteAPIName = siteApiName,
+                               UserId = user.user_id
+                           };
+            }
 
         }
 

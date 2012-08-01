@@ -88,23 +88,30 @@ namespace KelliPokerPlanning
                 if (string.IsNullOrWhiteSpace(data))
                     return null;
 
-                var results = JsonConvert.DeserializeObject<UsersResult>(data);
+                try
+                {
+                    var results = JsonConvert.DeserializeObject<UsersResult>(data);
 
-                if (results == null)
-                    return null;
+                    if (results == null)
+                        return null;
 
-                var user = results.items.SingleOrDefault(i => i.user_id == userId);
+                    var user = results.items.SingleOrDefault(i => i.user_id == userId);
 
-                if (user == null)
-                    return null;
+                    if (user == null)
+                        return null;
 
-                return new User()
-                           {
-                               AvatarUrl = user.profile_image,
-                               DisplayName = user.display_name,
-                               SiteAPIName = siteApiName,
-                               UserId = user.user_id
-                           };
+                    return new User()
+                               {
+                                   AvatarUrl = user.profile_image,
+                                   DisplayName = user.display_name,
+                                   SiteAPIName = siteApiName,
+                                   UserId = user.user_id
+                               };
+                }
+                catch (JsonReaderException ex)
+                {
+                    throw new ApplicationException(data, ex);
+                }
             }
         }
 

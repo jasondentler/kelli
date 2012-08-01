@@ -59,7 +59,8 @@ namespace KelliPokerPlanning
             if (isLocal)
                 return new User()
                            {
-                               AvatarUrl = "http://www.gravatar.com/avatar/2aaf05c5e05389c501b4fd7451abecdb?d=identicon&r=PG",
+                               AvatarUrl =
+                                   "http://www.gravatar.com/avatar/2aaf05c5e05389c501b4fd7451abecdb?d=identicon&r=PG",
                                DisplayName = "Jason Dentler",
                                SiteAPIName = "stackoverflow",
                                UserId = 837001
@@ -76,39 +77,62 @@ namespace KelliPokerPlanning
                                 {"sort", "reputation"}
                             };
 
-            using (var wc = new WebClient())
+            var uri = BuildUri(url, parms);
+
+            var req = (HttpWebRequest) WebRequest.Create(uri);
+
+            req.Accept = "application/json, text/javascript, */*; q=0.01";
+            req.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+            var data = GetResponse(req);
+
+            Debug.WriteLine(data);
+
+            Trace.WriteLine(data);
+
+            if (string.IsNullOrWhiteSpace(data))
+                return null;
+
+            var results = JsonConvert.DeserializeObject<UsersResult>(data);
+
+            if (results == null)
+                return null;
+
+            var user = results.items.SingleOrDefault(i => i.user_id == userId);
+
+            if (user == null)
+                return null;
+
+            return new User()
+                       {
+                           AvatarUrl = user.profile_image,
+                           DisplayName = user.display_name,
+                           SiteAPIName = siteApiName,
+                           UserId = user.user_id
+                       };
+
+        }
+
+        private Uri BuildUri(string url, Dictionary<string, string> parms)
+        {
+            var pairs = parms.Select(kv => string.Format("{0}={1}",
+                                                         HttpUtility.UrlEncode(kv.Key),
+                                                         HttpUtility.UrlEncode(kv.Value)));
+            var queryString = string.Join("&", pairs);
+            return new UriBuilder(url)
+                       {
+                           Query = queryString
+                       }.Uri;
+        }
+
+        private string GetResponse(HttpWebRequest request)
+        {
+            var response = request.GetResponse();
+            using (var responseStream = response.GetResponseStream())
+            using (var reader = new StreamReader(responseStream))
             {
-                wc.Headers[HttpRequestHeader.Accept] = "application/json, text/javascript, */*; q=0.01";
-
-                parms.ToList().ForEach(kv => wc.QueryString[kv.Key] = kv.Value);
-                var data = wc.DownloadString(url);
-
-                Debug.WriteLine(data);
-
-                Trace.WriteLine(data);
-
-                if (string.IsNullOrWhiteSpace(data))
-                    return null;
-
-                var results = JsonConvert.DeserializeObject<UsersResult>(data);
-
-                if (results == null)
-                    return null;
-
-                var user = results.items.SingleOrDefault(i => i.user_id == userId);
-
-                if (user == null)
-                    return null;
-
-                return new User()
-                           {
-                               AvatarUrl = user.profile_image,
-                               DisplayName = user.display_name,
-                               SiteAPIName = siteApiName,
-                               UserId = user.user_id
-                           };
+                return reader.ReadToEnd();
             }
-
         }
 
     }    

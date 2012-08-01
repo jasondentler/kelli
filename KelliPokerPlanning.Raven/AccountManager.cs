@@ -85,6 +85,8 @@ namespace KelliPokerPlanning
 
                 Debug.WriteLine(data);
 
+                Trace.WriteLine(data);
+
                 if (string.IsNullOrWhiteSpace(data))
                     return null;
 

@@ -73,7 +73,7 @@ namespace KelliPokerPlanning.Controllers
                     ConfigurationManager.AppSettings["StackExchangeKey"],
                     Request.Url.Host == "localhost");
             }
-            catch (JsonReaderException ex)
+            catch (JsonReaderException)
             {
                 // Do nothing here...
                 return View();

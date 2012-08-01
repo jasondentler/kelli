@@ -29,9 +29,22 @@ $(function () {
 
         $.when.apply(this, callbacks).done(function () {
             console.log('All /me operations completed');
-            for (var i = 0; i < arguments.length; i++) {
-                console.log(arguments[i]);
-            }
+
+            var args = Array.prototype.slice.call(arguments);
+
+            var results = new Array();
+
+            $.each(args, function (idx, jqXhrArgs) {
+                var items = jqXhrArgs[0].items;
+                var site = sites[idx];
+                $.each(items, function (x, user) {
+                    user.site = site;
+                });
+                results = results.concat(items);
+            });
+
+            console.log(results);
+
         }).fail(function () {
             showError('One or more errors occurred while trying to list Stack Exchange users for this account');
         });

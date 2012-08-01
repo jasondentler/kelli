@@ -1,9 +1,9 @@
 ﻿/// <reference path="https://api.stackexchange.com/js/2.0/all.js" />
 /// <reference path="~/Scripts/lib/jquery.js"/>
 
-
-
 $(function () {
+
+    var accessToken = 'not_authenticated';
 
     function showError(errorText) {
         $('#authError')
@@ -21,7 +21,7 @@ $(function () {
                 .attr('src', user.profile_image)
                 .attr('alt', user.display_name);
 
-            var site = $('<span />').html(user.site).addClass('site');
+            var site = $('<span />').html(user.site.name).addClass('site');
             var name = $('<span />').html(user.display_name).addClass('displayName');
 
             var item = $('<li />');
@@ -29,50 +29,101 @@ $(function () {
             site.appendTo(item);
             name.appendTo(item);
 
+            item.data('user', user);
+
             item.appendTo($('#users'));
         });
 
         $('#preAuth').hide();
         $('#postAuth').show();
+
+        $('#users li').click(function () {
+            var user = $(this).data('user');
+            selectUser(user);
+        });
     }
 
-    function getUserDetails(accessToken, sites) {
-        var callbacks = $.map(sites, function (site, idx) {
-            var url = 'https://api.stackexchange.com/2.0/me';
-            var params = {
-                access_token: accessToken,
-                filter: 'default',
-                key: pageData.key,
-                site: site.replace(/\s+/g, ''),
-                order: 'desc',
-                sort: 'reputation'
-            };
-            console.log('Getting /me for ' + site);
-            return $.getJSON(url, params);
+    function selectUser(user) {
+        console.log('Selected user #' + user.user_id + ' from ' + user.site);
+        $('#' + pageData.AccessTokenId).val(accessToken);
+        $('#' + pageData.SiteNameId).val(user.site);
+        $('#' + pageData.UserIdId).val(user.user_id);
+        $('#auth').submit();
+    }
+
+    function getSiteListMap(data) {
+        var items = [];
+        $.each(data.items, function (idx, site) {
+            items[site.site_url] = site;
+        });
+        return items;
+    }
+
+    function getUserDetails(accessToken, siteUrls) {
+        var siteListRequest = $.getJSON('https://api.stackexchange.com/2.0/sites', {
+            key: pageData.key,
+            filter: 'default',
+            page: 1,
+            pageSize: 1000
         });
 
-        $.when.apply(this, callbacks).done(function () {
-            console.log('All /me operations completed');
+        siteListRequest.fail(function () {
+            showError('An error occurred while trying to list the Stack Exchange sites');
+        });
 
-            var args = Array.prototype.slice.call(arguments);
+        siteListRequest.done(function (data) {
+            console.log('Got site list');
+            console.log(data);
 
-            var users = new Array();
-
-            $.each(args, function (idx, jqXhrArgs) {
-                var items = jqXhrArgs[0].items;
-                var site = sites[idx];
-                $.each(items, function (x, user) {
-                    user.site = site;
-                });
-                users = users.concat(items);
+            var siteListMap = getSiteListMap(data);
+            console.log(siteListMap);
+            
+            var sites = $.map(siteUrls, function (site_url) {
+                return siteListMap[site_url];
             });
 
-            console.log(users);
+            console.log(sites);
 
-            showUsers(users);
+            var callbacks = $.map(sites, function (site) {
+                var url = 'https://api.stackexchange.com/2.0/me';
+                var params = {
+                    access_token: accessToken,
+                    filter: 'default',
+                    key: pageData.key,
 
-        }).fail(function () {
-            showError('One or more errors occurred while trying to list Stack Exchange users for this account');
+                    site: site.api_site_parameter,
+                    order: 'desc',
+                    sort: 'reputation'
+                };
+                console.log('Getting /me for ' + site.name);
+                return $.getJSON(url, params)
+                    .fail(function () {
+                        showError('Unable to get your account(s) from ' + site.name);
+                    });
+            });
+
+            $.when.apply(this, callbacks).done(function () {
+                console.log('All /me operations completed');
+
+                var args = Array.prototype.slice.call(arguments);
+
+                var users = new Array();
+
+                $.each(args, function (idx, jqXhrArgs) {
+                    var items = jqXhrArgs[0].items;
+                    var siteUrl = siteUrls[idx];
+                    var site = siteListMap[siteUrl];
+                    $.each(items, function (x, user) {
+                        user.site = site;
+                    });
+                    users = users.concat(items);
+                });
+
+                console.log(users);
+
+                showUsers(users);
+
+            });
         });
     }
 
@@ -100,8 +151,9 @@ $(function () {
 
         SE.authenticate({
             success: function (data) {
+                accessToken = data.accessToken;
                 var sites = $.map(data.networkUsers, function (networkUser, idx) {
-                    return networkUser.site_name;
+                    return networkUser.site_url;
                 });
                 getUserDetails(data.accessToken, sites);
             },

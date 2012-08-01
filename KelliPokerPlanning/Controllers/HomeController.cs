@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Web.Mvc;
+using System.Web.Security;
 using IronRuby.Builtins;
 using KelliPokerPlanning.Models;
 using MvcContrib.Filters;
@@ -56,10 +57,27 @@ namespace KelliPokerPlanning.Controllers
             return Content(string.Empty, "text/html");
         }
 
-        [HttpPost]
+        [HttpPost, ModelStateToTempData]
         public RedirectToRouteResult Authenticate(Authentication model)
         {
-            throw new NotImplementedException();
+
+            var user = _accountManager.GetStackExchangeUser(
+                model.SiteAPIName,
+                model.UserId,
+                model.AccessToken,
+                ConfigurationManager.AppSettings["StackExchangeKey"],
+                Request.Url.Host == "localhost");
+
+            if (user == null)
+            {
+                ModelState.AddModelError(" ", "Unable to validate your account with Stack Exchange.");
+                return this.RedirectToAction(c => c.Index());
+            }
+
+            Session["user"] = user;
+            FormsAuthentication.RedirectFromLoginPage(user.DisplayName , false);
+
+            return null;
         }
     }
 }

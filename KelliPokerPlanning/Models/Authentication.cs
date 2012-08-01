@@ -13,7 +13,7 @@ namespace KelliPokerPlanning.Models
         public string ChannelUrl { get; set; }
 
         public string AccessToken { get; set; }
-        public string SiteName { get; set; }
+        public string SiteAPIName { get; set; }
         public int UserId { get; set; }
 
     }

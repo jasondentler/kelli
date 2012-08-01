@@ -7,6 +7,7 @@ using MvcContrib.Filters;
 
 namespace KelliPokerPlanning.Controllers
 {
+    [Authorize]
     public class SessionController : Controller
     {
         private readonly IAccountManager _accountManager;

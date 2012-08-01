@@ -1,4 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Web;
+using Newtonsoft.Json;
 using Raven.Client;
 
 namespace KelliPokerPlanning
@@ -43,6 +50,78 @@ namespace KelliPokerPlanning
         {
             userName = userName.ToLowerInvariant();
             return !_session.Query<Settings>().Any(s => s.UserName == userName);
+        }
+
+        public User GetStackExchangeUser(string siteApiName, int userId, string accessToken, string key, bool isLocal)
+        {
+
+            if (isLocal)
+                return new User()
+                           {
+                               AvatarUrl = "http://www.gravatar.com/avatar/2aaf05c5e05389c501b4fd7451abecdb?d=identicon&r=PG",
+                               DisplayName = "Jason Dentler",
+                               SiteAPIName = "stackoverflow",
+                               UserId = 837001
+                           };
+
+            var url = "https://api.stackexchange.com/2.0/me";
+            var parms = new Dictionary<string, string>()
+                            {
+                                {"access_token", accessToken},
+                                {"filter", "default"},
+                                {"key", ConfigurationManager.AppSettings["StackExchangeKey"]},
+                                {"site", siteApiName},
+                                {"order", "desc"},
+                                {"sort", "reputation"}
+                            };
+            
+            var req = GetWebRequest(url, parms);
+            req.Accept = "application/json, text/javascript, */*; q=0.01";
+            req.Method = "GET";
+            var resp = (HttpWebResponse) req.GetResponse();
+
+            using (var strm = resp.GetResponseStream())
+            using (var rdr = new StreamReader(strm))
+            {
+                var data = rdr.ReadToEnd();
+
+                if (string.IsNullOrWhiteSpace(data))
+                    return null;
+
+                var results = JsonConvert.DeserializeObject<UsersResult>(data);
+
+                if (results == null)
+                    return null;
+
+                var user = results.items.SingleOrDefault(i => i.user_id == userId);
+
+                if (user == null)
+                    return null;
+
+                return new User()
+                           {
+                               AvatarUrl = user.profile_image,
+                               DisplayName = user.display_name,
+                               SiteAPIName = siteApiName,
+                               UserId = user.user_id
+                           };
+            }
+        }
+
+        private HttpWebRequest GetWebRequest(string baseUrl, Dictionary<string, string> parms)
+        {
+            var pairs = parms.Select(kv => string.Format("{0}={1}",
+                                                         HttpUtility.UrlEncode(kv.Key),
+                                                         HttpUtility.UrlEncode(kv.Value)
+                                               ));
+            var queryString = string.Join("&", pairs);
+
+            var uri = new UriBuilder(new Uri(baseUrl))
+                          {
+                              Query = queryString
+                          }.Uri;
+
+            return (HttpWebRequest) WebRequest.Create(uri);
         }
     }    
 

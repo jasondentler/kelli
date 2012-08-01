@@ -100,7 +100,7 @@ textarea
     opacity: 1;
 }
 
-#users img {
+#users .avatar {
     float: left;
     width: 80px;
     padding-right: 0.5em;
@@ -108,5 +108,10 @@ textarea
 
 #users .site {
     display: block;
+}
+
+#users .site img {
+    height: 1.2em;
+    padding-right: 0.2em;
 }
 

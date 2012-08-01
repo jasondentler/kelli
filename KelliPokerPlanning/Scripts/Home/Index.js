@@ -12,6 +12,27 @@ $(function () {
         $('#authError').hide();
     }
 
+    function showUsers(users) {
+        $.each(users, function (idx, user) {
+            var img = $('<img />')
+                .attr('src', user.profile_image)
+                .attr('alt', user.display_name);
+
+            var name = $('<span />').html(user.display_name).addClass('displayName');
+            var site = $('<span />').html(user.site).addClass('site');
+
+            var item = $('<li />');
+            img.appendTo(item);
+            name.appendTo(item);
+            site.appendTo(item);
+
+            item.appendTo($('#users'));
+        });
+
+        $('#preAuth').hide();
+        $('#postAuth').show();
+    }
+
     function getUserDetails(accessToken, sites) {
         var callbacks = $.map(sites, function (site, idx) {
             var url = 'https://api.stackexchange.com/2.0/me';
@@ -32,7 +53,7 @@ $(function () {
 
             var args = Array.prototype.slice.call(arguments);
 
-            var results = new Array();
+            var users = new Array();
 
             $.each(args, function (idx, jqXhrArgs) {
                 var items = jqXhrArgs[0].items;
@@ -40,10 +61,14 @@ $(function () {
                 $.each(items, function (x, user) {
                     user.site = site;
                 });
-                results = results.concat(items);
+                users = users.concat(items);
             });
 
-            console.log(results);
+            console.log(users);
+
+            console.log(JSON.stringify(users));
+
+            showUsers(users);
 
         }).fail(function () {
             showError('One or more errors occurred while trying to list Stack Exchange users for this account');

@@ -2,17 +2,26 @@
 /// <reference path="~/Scripts/lib/jquery.js"/>
 $(function () {
 
-    function getUserDetails(accessToken) {
-        var url = 'https://api.stackexchange.com/2.0/me'; //?order=desc&sort=reputation&site=stackoverflow
-        var params = {
-            access_token: accessToken,
-            filter: 'default',
-            key: pageData.key
-        };
+    function getUserDetails(accessToken, sites) {
+        var callbacks = $.map(sites, function (site, idx) {
+            var url = 'https://api.stackexchange.com/2.0/me';
+            var params = {
+                access_token: accessToken,
+                filter: 'default',
+                key: pageData.key,
+                site: site,
+                order: 'desc',
+                sort: 'reputation'
+            };
+            console.log('Getting /me for ' + site);
+            return $.getJSON(url, params);
+        });
 
-        $.getJSON(url, params, function (data) {
-            console.log('/me Success!');
-            console.log(data);
+        $.when.apply(this, callbacks).done(function () {
+            console.log('All /me operations completed');
+            for (var i = 0; i < arguments.length; i++) {
+                console.log(arguments[i]);
+            }
         });
     }
 
@@ -30,7 +39,10 @@ $(function () {
     $('#login').click(function () {
         SE.authenticate({
             success: function (data) {
-                getUserDetails(data.accessToken);
+                var sites = $.map(data.networkUsers, function (networkUser, idx) {
+                    return networkUser.site_name;
+                });
+                getUserDetails(data.accessToken, sites);
             },
             error: function (data) {
                 $('#authError')
@@ -38,7 +50,7 @@ $(function () {
                     .show();
             },
             scope: [],
-            networkUsers: false
+            networkUsers: true
         });
     });
 

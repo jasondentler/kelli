@@ -2,6 +2,16 @@
 /// <reference path="~/Scripts/lib/jquery.js"/>
 $(function () {
 
+    function showError(errorText) {
+        $('#authError')
+            .html(errorText)
+            .show();
+    }
+
+    function hideError() {
+        $('#authError').hide();
+    }
+
     function getUserDetails(accessToken, sites) {
         var callbacks = $.map(sites, function (site, idx) {
             var url = 'https://api.stackexchange.com/2.0/me';
@@ -9,7 +19,7 @@ $(function () {
                 access_token: accessToken,
                 filter: 'default',
                 key: pageData.key,
-                site: site,
+                site: site.replace(/\s+/g, ''),
                 order: 'desc',
                 sort: 'reputation'
             };
@@ -22,6 +32,8 @@ $(function () {
             for (var i = 0; i < arguments.length; i++) {
                 console.log(arguments[i]);
             }
+        }).fail(function () {
+            showError('One or more errors occurred while trying to list Stack Exchange users for this account');
         });
     }
 
@@ -37,6 +49,7 @@ $(function () {
     });
 
     $('#login').click(function () {
+        hideError();
         SE.authenticate({
             success: function (data) {
                 var sites = $.map(data.networkUsers, function (networkUser, idx) {
@@ -45,9 +58,7 @@ $(function () {
                 getUserDetails(data.accessToken, sites);
             },
             error: function (data) {
-                $('#authError')
-                    .html('Sorry. Authentication failed. ' + data.errorName + ':' + data.errorMessage)
-                    .show();
+                showError('Sorry. Authentication failed. ' + data.errorName + ':' + data.errorMessage);
             },
             scope: [],
             networkUsers: true

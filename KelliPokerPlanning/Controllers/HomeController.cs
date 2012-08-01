@@ -6,6 +6,7 @@ using IronRuby.Builtins;
 using KelliPokerPlanning.Models;
 using MvcContrib.Filters;
 using MvcContrib;
+using Newtonsoft.Json;
 
 namespace KelliPokerPlanning.Controllers
 {
@@ -61,12 +62,21 @@ namespace KelliPokerPlanning.Controllers
         public RedirectToRouteResult Authenticate(Authentication model)
         {
 
-            var user = _accountManager.GetStackExchangeUser(
-                model.SiteAPIName,
-                model.UserId,
-                model.AccessToken,
-                ConfigurationManager.AppSettings["StackExchangeKey"],
-                Request.Url.Host == "localhost");
+            User user = null;
+            
+            try
+            {
+                user = _accountManager.GetStackExchangeUser(
+                    model.SiteAPIName,
+                    model.UserId,
+                    model.AccessToken,
+                    ConfigurationManager.AppSettings["StackExchangeKey"],
+                    Request.Url.Host == "localhost");
+            }
+            catch (JsonReaderException ex)
+            {
+                // Do nothing here...
+            }
 
             if (user == null)
             {

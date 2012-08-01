@@ -21,7 +21,7 @@ $(function () {
                 .attr('src', user.profile_image)
                 .attr('alt', user.display_name);
 
-            var site = $('<span />').html(user.site.name).addClass('site');
+            var site = $('<span />').html(user.site.api_site_parameter).addClass('site');
             var name = $('<span />').html(user.display_name).addClass('displayName');
 
             var item = $('<li />');
@@ -77,7 +77,7 @@ $(function () {
 
             var siteListMap = getSiteListMap(data);
             console.log(siteListMap);
-            
+
             var sites = $.map(siteUrls, function (site_url) {
                 return siteListMap[site_url];
             });
@@ -120,6 +120,8 @@ $(function () {
                 });
 
                 console.log(users);
+
+                console.log(JSON.stringify(users));
 
                 showUsers(users);
 

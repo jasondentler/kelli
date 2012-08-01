@@ -74,62 +74,36 @@ namespace KelliPokerPlanning
                                 {"order", "desc"},
                                 {"sort", "reputation"}
                             };
-            
-            var req = GetWebRequest(url, parms);
-            req.Accept = "application/json, text/javascript, */*; q=0.01";
-            req.Method = "GET";
-            var resp = (HttpWebResponse) req.GetResponse();
 
-            using (var strm = resp.GetResponseStream())
-            using (var rdr = new StreamReader(strm))
+            var wc = new WebClient();
+            wc.Headers[HttpRequestHeader.Accept] = "application/json, text/javascript, */*; q=0.01";
+
+            parms.ToList().ForEach(kv => wc.QueryString[kv.Key] = kv.Value);
+            var data = wc.DownloadString(url);
+
+            if (string.IsNullOrWhiteSpace(data))
+                return null;
+
+            var results = JsonConvert.DeserializeObject<UsersResult>(data);
+
+            if (results == null)
+                return null;
+
+            var user = results.items.SingleOrDefault(i => i.user_id == userId);
+
+            if (user == null)
+                return null;
+
+            return new User()
             {
-                var data = rdr.ReadToEnd();
+                AvatarUrl = user.profile_image,
+                DisplayName = user.display_name,
+                SiteAPIName = siteApiName,
+                UserId = user.user_id
+            };
 
-                if (string.IsNullOrWhiteSpace(data))
-                    return null;
-
-                try
-                {
-                    var results = JsonConvert.DeserializeObject<UsersResult>(data);
-
-                    if (results == null)
-                        return null;
-
-                    var user = results.items.SingleOrDefault(i => i.user_id == userId);
-
-                    if (user == null)
-                        return null;
-
-                    return new User()
-                               {
-                                   AvatarUrl = user.profile_image,
-                                   DisplayName = user.display_name,
-                                   SiteAPIName = siteApiName,
-                                   UserId = user.user_id
-                               };
-                }
-                catch (JsonReaderException ex)
-                {
-                    throw new ApplicationException(data, ex);
-                }
-            }
         }
 
-        private HttpWebRequest GetWebRequest(string baseUrl, Dictionary<string, string> parms)
-        {
-            var pairs = parms.Select(kv => string.Format("{0}={1}",
-                                                         HttpUtility.UrlEncode(kv.Key),
-                                                         HttpUtility.UrlEncode(kv.Value)
-                                               ));
-            var queryString = string.Join("&", pairs);
-
-            var uri = new UriBuilder(new Uri(baseUrl))
-                          {
-                              Query = queryString
-                          }.Uri;
-
-            return (HttpWebRequest) WebRequest.Create(uri);
-        }
     }    
 
 

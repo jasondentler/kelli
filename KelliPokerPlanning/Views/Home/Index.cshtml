@@ -4,7 +4,9 @@
     ViewBag.Title = "Kelli Planning Poker";
     Bundles.AddPageData("pageData", new
                                         {
-                                            userNameId = Html.IdFor(m => m.UserName).ToHtmlString(),
+                                            AccessTokenId = Html.IdFor(m => m.AccessToken).ToHtmlString(),
+                                            SiteNameId = Html.IdFor(m => m.SiteName).ToHtmlString(),
+                                            UserIdId = Html.IdFor(m => m.UserId).ToHtmlString(),
                                             clientId = Model.ClientId,
                                             key = Model.Key,
                                             channelUrl = Model.ChannelUrl
@@ -31,3 +33,10 @@
     <ul id="users">
     </ul>
 </div>
+
+@using (Html.BeginForm<HomeController>(c => c.Authenticate(null), FormMethod.Post, new { id = "auth" }))
+{
+    @Html.HiddenFor(m => m.AccessToken)
+    @Html.HiddenFor(m => m.SiteName)
+    @Html.HiddenFor(m => m.UserId)
+}

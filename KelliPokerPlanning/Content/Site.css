@@ -74,12 +74,39 @@ textarea
     display: none;
 }
 
-#userNameContainer .unavailable 
-{
-	background-color: yellow;
+/* Styles for user selection
+-----------------------------------------------------------*/
+#users {
+    list-style: none;
 }
-#userNameContainer .invalid 
-{
-	background-color: red;
+
+#users li {
+    float: left;
+    width: 200px;
+    padding: 0.5em;
+    margin: 0.5em;
+    cursor: pointer;
+    border: solid 1px black;
+
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -khtml-border-radius: 15px;
+    border-radius: 15px;
+
+    opacity: 0.50;
+}
+
+#users li:hover {
+    opacity: 1;
+}
+
+#users img {
+    float: left;
+    width: 80px;
+    padding-right: 0.5em;
+}
+
+#users .site {
+    display: block;
 }
 

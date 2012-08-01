@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Web.Mvc;
+using IronRuby.Builtins;
 using KelliPokerPlanning.Models;
 using MvcContrib.Filters;
 using MvcContrib;
@@ -39,13 +40,15 @@ namespace KelliPokerPlanning.Controllers
         [HttpPost, ModelStateToTempData]
         public RedirectToRouteResult Index(Authentication model)
         {
-            if (!ModelState.IsValid)
-                return this.RedirectToAction(c => c.Index());
+            //if (!ModelState.IsValid)
+            //    return this.RedirectToAction(c => c.Index());
 
-            if (_accountManager.IsAvailable(model.UserName))
-                return this.RedirectToAction<SessionController>(c => c.Create(model.UserName));
+            //if (_accountManager.IsAvailable(model.UserName))
+            //    return this.RedirectToAction<SessionController>(c => c.Create(model.UserName));
 
-            return this.RedirectToAction<SessionController>(c => c.Index(model.UserName));
+            //return this.RedirectToAction<SessionController>(c => c.Index(model.UserName));
+
+            throw new NotImplementedException();
         }
 
         public ActionResult ChannelUrl()
@@ -53,5 +56,10 @@ namespace KelliPokerPlanning.Controllers
             return Content(string.Empty, "text/html");
         }
 
+        [HttpPost]
+        public RedirectToRouteResult Authenticate(Authentication model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,38 +1,30 @@
-﻿/// <reference path="~/signalr"/>
+﻿/// <reference path="https://api.stackexchange.com/js/2.0/all.js" />
+/// <reference path="~/Scripts/lib/jquery.js"/>
 $(function () {
-    // Proxy created on the fly
-    var setup = $.connection.setupHub;
+    SE.init({
+        clientId: pageData.clientId,
+        key: pageData.key,
+        channelUrl: pageData.channelUrl,
+        complete: function (data) {
+            console.log('Initialized');
+            console.log(data);
+            $('#login').removeAttr('disabled');
+        }
+    });
 
-    var userNameId = '#' + pageData.userNameId;
-
-    $(userNameId).focus();
-
-    var onUserNameChanged = function () {
-        var userName = $(userNameId).val();
-        console.log('User name is ' + userName);
-
-        setup.isValidAndAvailable(userName)
-            .done(function (data) {
-                if (data.userName != $(userNameId).val())
-                    return;
-
-                $(userNameId).removeClass("invalid");
-                $(userNameId).removeClass("unavailable");
-
-                if (!data.isValid)
-                    $(userNameId).addClass("invalid");
-
-                if (!data.isAvailable)
-                    $(userNameId).addClass("unavailable");
-            });
-    };
-
-
-    // Start the connection
-    $.connection.hub.start()
-        .done(function () {
-            $(userNameId).bind('input', onUserNameChanged);
-            onUserNameChanged();
+    $('#login').click(function () {
+        SE.authenticate({
+            success: function (data) {
+                console.log('Success!');
+                console.log(data);
+            },
+            error: function (data) {
+                console.log('Error!');
+                console.log(data);
+            },
+            scope: [],
+            networkUsers: true
         });
+    });
 
 });

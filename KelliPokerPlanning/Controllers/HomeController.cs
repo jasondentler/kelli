@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Configuration;
 using System.Web.Mvc;
 using KelliPokerPlanning.Models;
-using Microsoft.Web.Mvc;
 using MvcContrib.Filters;
+using MvcContrib;
 
 namespace KelliPokerPlanning.Controllers
 {
@@ -18,7 +19,21 @@ namespace KelliPokerPlanning.Controllers
         [HttpGet, ModelStateToTempData]
         public ViewResult Index()
         {
-            return View();
+            var reqUrl = Request.Url;
+            var baseUrl = new UriBuilder(reqUrl.Scheme, reqUrl.Host, reqUrl.Port).Uri;
+            var channelUrl = new Uri(baseUrl, Url.Action<HomeController>(c => c.ChannelUrl()));
+
+            return View(new Authentication()
+                            {
+                                ChannelUrl = channelUrl.ToString(),
+                                ClientId = ConfigurationManager.AppSettings["StackExchangeClientId"],
+                                Key = ConfigurationManager.AppSettings["StackExchangeKey"]
+                            });
+        }
+
+        private ActionResult Auth()
+        {
+            throw new NotImplementedException();
         }
 
         [HttpPost, ModelStateToTempData]
@@ -31,6 +46,11 @@ namespace KelliPokerPlanning.Controllers
                 return this.RedirectToAction<SessionController>(c => c.Create(model.UserName));
 
             return this.RedirectToAction<SessionController>(c => c.Index(model.UserName));
+        }
+
+        public ActionResult ChannelUrl()
+        {
+            return Content(string.Empty, "text/html");
         }
 
     }

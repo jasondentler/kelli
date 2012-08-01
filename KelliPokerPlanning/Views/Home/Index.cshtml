@@ -1,12 +1,17 @@
-﻿@model Authentication
+﻿@using System.Configuration
+@model Authentication
 @{
     ViewBag.Title = "Kelli Planning Poker";
-    Bundles.Reference("~/Scripts/Home/Index.js");
     Bundles.AddPageData("pageData", new
                                         {
-                                            userNameId = Html.IdFor(m => m.UserName).ToHtmlString()
+                                            userNameId = Html.IdFor(m => m.UserName).ToHtmlString(),
+                                            clientId = Model.ClientId,
+                                            key = Model.Key,
+                                            channelUrl = Model.ChannelUrl
                                         });
+    Bundles.Reference("~/Scripts/Home/Index.js");
 }
+
 <p>
     To begin a poker planning session, log in with your StackExchange (StackOverflow,
     ServerFault, etc) account. You will be the moderator. Your team can join as estimators
@@ -17,10 +22,4 @@
     Note: Only the moderator needs a StackExchange account.
 </p>
 
-@using (Html.BeginForm<HomeController>(c => c.Index(null)))
-{
-    <div id="userNameContainer">
-        @Html.LabelFor(m => m.UserName, "StackExchange user name"):
-        @Html.TextBoxFor(m => m.UserName)
-    </div>
-}
+<button id="login" disabled="disabled">Log in with Stack Exchange</button>

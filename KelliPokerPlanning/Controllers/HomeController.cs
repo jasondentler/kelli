@@ -59,7 +59,7 @@ namespace KelliPokerPlanning.Controllers
         }
 
         [HttpPost, ModelStateToTempData]
-        public RedirectToRouteResult Authenticate(Authentication model)
+        public ActionResult Authenticate(Authentication model)
         {
 
             User user = null;
@@ -76,6 +76,7 @@ namespace KelliPokerPlanning.Controllers
             catch (JsonReaderException ex)
             {
                 // Do nothing here...
+                return View();
             }
 
             if (user == null)

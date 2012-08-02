@@ -7,7 +7,7 @@ using MvcContrib.Filters;
 
 namespace KelliPokerPlanning.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Moderator")]
     public class SessionController : Controller
     {
         private readonly IAccountManager _accountManager;
@@ -18,17 +18,17 @@ namespace KelliPokerPlanning.Controllers
         }
 
         [HttpGet, ModelStateToTempData]
-        public ViewResult Index(string id)
+        public ViewResult Index()
         {
-            return View(model:id);
+            return View(model:User.Identity.Name);
         }
-
-
+        
         [HttpGet, ModelStateToTempData]
         public ViewResult Create(string id)
         {
+            var user = (User) HttpContext.Items["user"];
+            var settings = _accountManager.GetAccountSettings(user.SiteApiName, user.UserId);
 
-            var settings = _accountManager.GetAccountSettings(id);
             if (settings != null)
             {
                 return View(new PokerSetup()
@@ -63,7 +63,7 @@ namespace KelliPokerPlanning.Controllers
 
             var documentId = _accountManager.Create(model.UserName, values, model.IncludeQuestion, model.IncludeInfinity);
 
-            return this.RedirectToAction(c => c.Index(model.UserName));
+            return this.RedirectToAction(c => c.Index());
         }
 
     }

@@ -34,7 +34,7 @@
     </ul>
 </div>
 
-@using (Html.BeginForm<HomeController>(c => c.Authenticate(null), FormMethod.Post, new { id = "auth" }))
+@using (Html.BeginForm<HomeController>(c => c.ModeratorAuthenticate(null), FormMethod.Post, new { id = "auth" }))
 {
     @Html.HiddenFor(m => m.AccessToken)
     @Html.HiddenFor(m => m.SiteAPIName)

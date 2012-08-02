@@ -62,7 +62,7 @@ namespace KelliPokerPlanning
                                AvatarUrl =
                                    "http://www.gravatar.com/avatar/2aaf05c5e05389c501b4fd7451abecdb?d=identicon&r=PG",
                                DisplayName = "Jason Dentler",
-                               SiteAPIName = "stackoverflow",
+                               SiteApiName = "stackoverflow",
                                UserId = 837001
                            };
 
@@ -107,7 +107,7 @@ namespace KelliPokerPlanning
                        {
                            AvatarUrl = user.profile_image,
                            DisplayName = user.display_name,
-                           SiteAPIName = siteApiName,
+                           SiteApiName = siteApiName,
                            UserId = user.user_id
                        };
 

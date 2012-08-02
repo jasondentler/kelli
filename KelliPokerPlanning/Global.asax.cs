@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.Security;
+using Newtonsoft.Json;
 
 namespace KelliPokerPlanning
 {
@@ -36,5 +39,57 @@ namespace KelliPokerPlanning
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
         }
+
+        protected void Application_AuthenticateRequest(Object sender, EventArgs e)
+        {
+            HttpCookie authCookie = Context.Request.Cookies[FormsAuthentication.FormsCookieName];
+            if (authCookie == null || authCookie.Value == "")
+                return;
+
+            FormsAuthenticationTicket authTicket;
+            try
+            {
+                authTicket = FormsAuthentication.Decrypt(authCookie.Value);
+            }
+            catch
+            {
+                return;
+            }
+
+            var userData = authTicket.UserData;
+            var user = JsonConvert.DeserializeObject<User>(userData);
+
+            if (user == null)
+                return;
+
+            Context.Items["user"] = user;
+
+            // retrieve roles from UserData
+            var roles = new string[0];
+            const string estimator = "Estimator";
+            const string moderator = "Moderator";
+
+            switch (user.Role)
+            {
+                case KelliPokerPlanning.User.Roles.None:
+                    break;
+                case KelliPokerPlanning.User.Roles.Estimator:
+                    roles = new[] {estimator};
+                    break;
+                case KelliPokerPlanning.User.Roles.Moderator:
+                    roles = new[] {moderator};
+                    break;
+                case KelliPokerPlanning.User.Roles.Moderator | KelliPokerPlanning.User.Roles.Estimator:
+                    roles = new[] {moderator, estimator};
+                    break;
+                default:
+                    throw new ApplicationException("Invalid Role value");
+            }
+
+
+            if (Context.User != null)
+                Context.User = new GenericPrincipal(Context.User.Identity, roles);
+        }
+
     }
 }

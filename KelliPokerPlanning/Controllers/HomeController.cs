@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Configuration;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using IronRuby.Builtins;
 using KelliPokerPlanning.Models;
 using MvcContrib.Filters;
 using MvcContrib;
@@ -33,62 +33,46 @@ namespace KelliPokerPlanning.Controllers
                                 Key = ConfigurationManager.AppSettings["StackExchangeKey"]
                             });
         }
-
-        private ActionResult Auth()
-        {
-            throw new NotImplementedException();
-        }
-
-        [HttpPost, ModelStateToTempData]
-        public RedirectToRouteResult Index(Authentication model)
-        {
-            //if (!ModelState.IsValid)
-            //    return this.RedirectToAction(c => c.Index());
-
-            //if (_accountManager.IsAvailable(model.UserName))
-            //    return this.RedirectToAction<SessionController>(c => c.Create(model.UserName));
-
-            //return this.RedirectToAction<SessionController>(c => c.Index(model.UserName));
-
-            throw new NotImplementedException();
-        }
-
+        
         public ActionResult ChannelUrl()
         {
             return Content(string.Empty, "text/html");
         }
 
         [HttpPost, ModelStateToTempData]
-        public ActionResult Authenticate(Authentication model)
+        public ActionResult ModeratorAuthenticate(Authentication model)
         {
 
             User user = null;
             
-            try
-            {
                 user = _accountManager.GetStackExchangeUser(
                     model.SiteAPIName,
                     model.UserId,
                     model.AccessToken,
                     ConfigurationManager.AppSettings["StackExchangeKey"],
                     Request.Url.Host == "localhost");
-            }
-            catch (JsonReaderException)
-            {
-                // Do nothing here...
-                return View();
-            }
-
+        
             if (user == null)
             {
                 ModelState.AddModelError(" ", "Unable to validate your account with Stack Exchange.");
                 return this.RedirectToAction(c => c.Index());
             }
 
-            Session["user"] = user;
-            FormsAuthentication.RedirectFromLoginPage(user.DisplayName , false);
+            user.Role = user.Role | KelliPokerPlanning.User.Roles.Moderator;
 
-            return null;
+            var ticket = new FormsAuthenticationTicket(
+                1,
+                user.DisplayName,
+                DateTime.Now,
+                DateTime.Now.AddDays(0.5),
+                true,
+                JsonConvert.SerializeObject(user));
+
+            var encryptedTicket = FormsAuthentication.Encrypt(ticket);
+            var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+            Response.Cookies.Add(authCookie);
+
+            return this.RedirectToAction<SessionController>(c => c.Index());
         }
     }
 }

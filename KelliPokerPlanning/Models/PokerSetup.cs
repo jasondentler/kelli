@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace KelliPokerPlanning.Models
 {
@@ -8,5 +9,12 @@ namespace KelliPokerPlanning.Models
         public string Values { get; set; }
         public bool IncludeQuestion { get; set; }
         public bool IncludeInfinity { get; set; }
+
+        public string[] SplitValues()
+        {
+            return Values.Split(Environment.NewLine.ToCharArray())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .ToArray();
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿@model PokerSetup
-
 @{
     ViewBag.Title = "Welcome " + Context.User.Identity.Name;
+    Bundles.AddPageData("model", Model);
 }
 
-<p>Your team can join the poker planning session with by visiting this url:</p>

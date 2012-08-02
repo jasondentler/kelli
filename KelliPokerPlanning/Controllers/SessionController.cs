@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using AutoMapper;
 using KelliPokerPlanning.Models;
 using Microsoft.Web.Mvc;
 using MvcContrib.Filters;
@@ -18,32 +19,29 @@ namespace KelliPokerPlanning.Controllers
         }
 
         [HttpGet, ModelStateToTempData]
-        public ViewResult Index()
+        public ActionResult Index()
         {
-            return View(model:User.Identity.Name);
+            var user = (User)HttpContext.Items["user"];
+            var settings = _accountManager.GetAccountSettings(user.SiteApiName, user.UserId);
+
+            if (settings == null)
+                return this.RedirectToAction(c => c.Create());
+
+            return View(Mapper.Map<Settings, PokerSetup>(settings));
         }
         
         [HttpGet, ModelStateToTempData]
-        public ViewResult Create(string id)
+        public ActionResult Create()
         {
             var user = (User) HttpContext.Items["user"];
             var settings = _accountManager.GetAccountSettings(user.SiteApiName, user.UserId);
 
             if (settings != null)
-            {
-                return View(new PokerSetup()
-                                {
-                                    UserName = settings.UserName,
-                                    Values = string.Join(Environment.NewLine, settings.Values),
-                                    IncludeQuestion = settings.IncludeQuestionMark,
-                                    IncludeInfinity = settings.IncludeInfinity
-                                });
-            }
+                return this.RedirectToAction(c => c.Index());
 
             var values = new[] { "XS", "S", "M", "L", "XL", "2X" };
             return View(new PokerSetup()
             {
-                UserName = id,
                 Values = string.Join(Environment.NewLine, values),
                 IncludeQuestion = true,
                 IncludeInfinity = true
@@ -54,14 +52,16 @@ namespace KelliPokerPlanning.Controllers
         public RedirectToRouteResult Create(PokerSetup model)
         {
             if (!ModelState.IsValid)
-                return this.RedirectToAction(c => c.Create(model.UserName));
+                return this.RedirectToAction(c => c.Create());
+
+            var user = (User)HttpContext.Items["user"];
 
             var values = (model.Values ?? "")
                 .Split(Environment.NewLine.ToCharArray())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .ToArray();
 
-            var documentId = _accountManager.Create(model.UserName, values, model.IncludeQuestion, model.IncludeInfinity);
+            var documentId = _accountManager.Create(user.SiteApiName, user.UserId, values, model.IncludeQuestion, model.IncludeInfinity);
 
             return this.RedirectToAction(c => c.Index());
         }

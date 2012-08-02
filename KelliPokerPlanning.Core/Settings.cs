@@ -4,7 +4,8 @@ namespace KelliPokerPlanning
     {
 
         public string Id { get; set; }
-        public string UserName { get; set; }
+        public string SiteApiName { get; set; }
+        public int UserId { get; set; }
         public string[] Values { get; set; }
         public bool IncludeQuestionMark { get; set; }
         public bool IncludeInfinity { get; set; }

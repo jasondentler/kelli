@@ -1,7 +1,7 @@
-﻿@model string
+﻿@model PokerSetup
 
 @{
-    ViewBag.Title = "Welcome " + Model;
+    ViewBag.Title = "Welcome " + Context.User.Identity.Name;
 }
 
-<p>Welcome @Model!</p>
+<p>Your team can join the poker planning session with by visiting this url:</p>

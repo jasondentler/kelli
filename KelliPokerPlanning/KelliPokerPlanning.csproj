@@ -39,6 +39,9 @@
     <Reference Include="AjaxMin, Version=4.46.4422.26284, Culture=neutral, PublicKeyToken=21ef50ce11b5d80f, processorArchitecture=MSIL">
       <HintPath>..\packages\AjaxMin.4.46.4422.26284\lib\net20\AjaxMin.dll</HintPath>
     </Reference>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.2.1.267\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Cassette, Version=1.2.1.30492, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Cassette.1.2.1\lib\net40-Client\Cassette.dll</HintPath>
     </Reference>
@@ -159,6 +162,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\AutoMapperModule.cs" />
     <Compile Include="App_Start\ManagerModule.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RavenModule.cs" />
@@ -172,7 +176,6 @@
     <Compile Include="Models\Authentication.cs" />
     <Compile Include="Models\PokerSetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SetupHub.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\classic-playing-cards.png" />

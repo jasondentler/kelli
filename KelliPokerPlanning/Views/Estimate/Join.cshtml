@@ -1,0 +1,19 @@
+﻿@model Join
+
+@{
+    ViewBag.Title = "Join a session";
+}
+
+@Html.ValidationSummary()
+@using (Html.BeginForm<EstimateController>(c => c.Join(null)))
+{
+    <div>
+        @Html.LabelFor(m => m.SessionId, "Session Id")<br/>
+        @Html.TextBoxFor(m => m.SessionId)
+    </div>
+    <div>
+        @Html.LabelFor(m => m.JoinCode, "Join Code")<br/>
+        @Html.TextBoxFor(m => m.JoinCode)
+    </div>
+    @Html.SubmitButton("submit","Join the session")
+}

@@ -2,14 +2,26 @@
 @{
     ViewBag.Title = "Welcome " + Context.User.Identity.Name;
     Bundles.AddPageData("model", Model);
+    Bundles.Reference("/Scripts/Session/index.js");
 
-    var estimateDisplayUrl = Url.Action<EstimateController>(c => c.Index(Model.Id, null));
-    var estimateJoinUrl = Url.Action<EstimateController>(c => c.Index(Model.Id, Model.JoinCode));
+    var estimateJoinUrl = (string) ViewBag.EstimateUrl;
 }
-
-<p>Your team can join by visiting this url:<br/>
-    <a href="@estimateJoinUrl">@estimateDisplayUrl</a>
-    
-    @Html.QRCode(estimateJoinUrl)
-</p>
-
+<div>
+    <p>
+        To join as an estimator:</p>
+    <p>
+        Scan this QR Code: <br />@Html.QRCode(estimateJoinUrl, htmlAttributes:new {id="qr"})
+        @Html.QRCode(estimateJoinUrl, size: 500, htmlAttributes:new {id="qr_large"})<br/>
+        (Click to enlarge)</p>
+    <p>
+        or</p>
+    <p>
+        Click <a href="@estimateJoinUrl">here</a>.</p>
+    <p>
+        or</p>
+    <ol>
+        <li>Browse to <a href="/estimate" target="_blank">/estimate</a></li>
+        <li>Enter session id @Model.Id</li>
+        <li>Enter join code @Model.JoinCode</li>
+    </ol>
+</div>

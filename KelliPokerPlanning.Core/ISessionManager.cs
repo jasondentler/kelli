@@ -11,6 +11,7 @@ namespace KelliPokerPlanning
         IEnumerable<SessionListItem> GetSessions(User user);
         PlanningSession ResumeSession(User user, int sessionId);
         PlanningSession StartNewSession(User user, PokerSetup setup);
+        PlanningSession JoinSession(int sessionId, string joinCode);
         void EndSession(User user, int sessionId);
     }
 }

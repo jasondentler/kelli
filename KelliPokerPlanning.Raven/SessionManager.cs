@@ -64,6 +64,12 @@ namespace KelliPokerPlanning
             return session;
         }
 
+        public PlanningSession JoinSession(int sessionId, string joinCode)
+        {
+            var session = _session.Load<PlanningSession>(sessionId);
+            return session.JoinCode == joinCode ? session : null;
+        }
+
         public void EndSession(User user, int sessionId)
         {
             var session = ResumeSession(user, sessionId);

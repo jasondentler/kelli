@@ -21,6 +21,19 @@ namespace KelliPokerPlanning.Controllers
         {
             var user = (User)HttpContext.Items["user"];
             var session = _sessionManager.ResumeSession(user, id);
+
+            var path = Url.RouteUrl(new
+                                        {
+                                            controller = "estimate",
+                                            action = "Index",
+                                            id = session.Id,
+                                            joinCode = session.JoinCode
+                                        });
+
+            var url = new Uri(Request.Url, path);
+
+            ViewBag.EstimateUrl = url.ToString();
+
             return View(session);
         }
         

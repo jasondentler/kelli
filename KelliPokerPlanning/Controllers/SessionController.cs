@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using AutoMapper;
-using KelliPokerPlanning.Models;
 using Microsoft.Web.Mvc;
 using MvcContrib.Filters;
 
@@ -11,41 +9,48 @@ namespace KelliPokerPlanning.Controllers
     [Authorize(Roles = "Moderator")]
     public class SessionController : Controller
     {
-        private readonly IAccountManager _accountManager;
+        private readonly ISessionManager _sessionManager;
 
-        public SessionController(IAccountManager accountManager)
+        public SessionController(ISessionManager sessionManager)
         {
-            _accountManager = accountManager;
+            _sessionManager = sessionManager;
         }
 
         [HttpGet, ModelStateToTempData]
-        public ActionResult Index()
+        public ActionResult Index(int id)
         {
             var user = (User)HttpContext.Items["user"];
-            var settings = _accountManager.GetAccountSettings(user.SiteApiName, user.UserId);
-
-            if (settings == null)
-                return this.RedirectToAction(c => c.Create());
-
-            return View(Mapper.Map<Settings, PokerSetup>(settings));
+            var session = _sessionManager.ResumeSession(user, id);
+            return View(session);
         }
         
         [HttpGet, ModelStateToTempData]
-        public ActionResult Create()
+        public ActionResult List()
         {
             var user = (User) HttpContext.Items["user"];
-            var settings = _accountManager.GetAccountSettings(user.SiteApiName, user.UserId);
+            var sessions = _sessionManager.GetSessions(user);
 
-            if (settings != null)
-                return this.RedirectToAction(c => c.Index());
+            if (!sessions.Any())
+                return this.RedirectToAction(c => c.Create());
 
-            var values = new[] { "XS", "S", "M", "L", "XL", "2X" };
-            return View(new PokerSetup()
-            {
-                Values = string.Join(Environment.NewLine, values),
-                IncludeQuestion = true,
-                IncludeInfinity = true
-            });
+            return View(sessions);
+        }
+
+        [HttpGet, ModelStateToTempData]
+        public ActionResult Create()
+        {
+            var values = new[] {"XS", "S", "M", "L", "XL", "2X"};
+
+            var user = (User) HttpContext.Items["user"];
+            var setup = _sessionManager.GetSetup(user)
+                        ?? new PokerSetup()
+                               {
+                                   Values = string.Join(Environment.NewLine, values),
+                                   IncludeQuestion = true,
+                                   IncludeInfinity = true
+                               };
+
+            return View(setup);
         }
 
         [HttpPost, ModelStateToTempData]
@@ -56,14 +61,9 @@ namespace KelliPokerPlanning.Controllers
 
             var user = (User)HttpContext.Items["user"];
 
-            var values = (model.Values ?? "")
-                .Split(Environment.NewLine.ToCharArray())
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .ToArray();
+            var session = _sessionManager.StartNewSession(user, model);
 
-            var documentId = _accountManager.Create(user.SiteApiName, user.UserId, values, model.IncludeQuestion, model.IncludeInfinity);
-
-            return this.RedirectToAction(c => c.Index());
+            return this.RedirectToAction(c => c.Index(session.Id));
         }
 
     }

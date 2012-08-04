@@ -7,6 +7,7 @@ namespace KelliPokerPlanning.App_Start
         public override void Load()
         {
             Kernel.Bind<IAccountManager>().To<AccountManager>();
+            Kernel.Bind<ISessionManager>().To<SessionManager>();
         }
     }
 }

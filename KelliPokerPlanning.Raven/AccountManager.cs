@@ -21,26 +21,6 @@ namespace KelliPokerPlanning
             _session = session;
         }
         
-        public Settings GetAccountSettings(string siteApiName, int userId)
-        {
-            return _session.Query<Settings>()
-                .SingleOrDefault(s => s.SiteApiName == siteApiName && s.UserId == userId);
-        }
-
-        public string Create(string siteApiName, int userId, string[] values, bool includeQuestionMark, bool includeInfinity)
-        {
-            var settings = new Settings()
-                               {
-                                   SiteApiName = siteApiName,
-                                   UserId = userId,
-                                   Values = values ?? new string[0],
-                                   IncludeQuestionMark = includeQuestionMark,
-                                   IncludeInfinity = includeInfinity
-                               };
-            _session.Store(settings);
-            return settings.Id;
-        }
-        
         public User GetStackExchangeUser(string siteApiName, int userId, string accessToken, string key, bool isLocal)
         {
 

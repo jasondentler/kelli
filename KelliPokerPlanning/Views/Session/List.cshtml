@@ -1,0 +1,16 @@
+﻿@model System.Collections.Generic.IEnumerable<KelliPokerPlanning.SessionListItem>
+@{
+    ViewBag.Title = "Welcome " + Context.User.Identity.Name;
+}
+
+<p>
+    <a href="@(Url.Action<SessionController>(c => c.Create()))">Start a new planning session</a> or select a resume one of these:
+<ul>
+    @foreach (var session in Model)
+    {
+        <li>
+            <a href="@(Url.Action<SessionController>(c => c.Index(session.Id)))">Started @session.Start with @session.EstimateCount item(s) estimated.</a>
+        </li>
+    }
+</ul>
+</p>

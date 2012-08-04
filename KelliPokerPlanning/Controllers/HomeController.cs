@@ -44,35 +44,23 @@ namespace KelliPokerPlanning.Controllers
         {
 
             User user = null;
-            
-                user = _accountManager.GetStackExchangeUser(
-                    model.SiteAPIName,
-                    model.UserId,
-                    model.AccessToken,
-                    ConfigurationManager.AppSettings["StackExchangeKey"],
-                    Request.Url.Host == "localhost");
-        
+
+            user = _accountManager.GetStackExchangeUser(
+                model.SiteAPIName,
+                model.UserId,
+                model.AccessToken,
+                ConfigurationManager.AppSettings["StackExchangeKey"],
+                Request.Url.Host == "localhost");
+
             if (user == null)
             {
                 ModelState.AddModelError(" ", "Unable to validate your account with Stack Exchange.");
                 return this.RedirectToAction(c => c.Index());
             }
 
-            user.Role = user.Role | KelliPokerPlanning.User.Roles.Moderator;
+            new AuthorizationHelper().SetAuthenticationCookie(HttpContext, user, KelliPokerPlanning.User.Roles.Moderator);
 
-            var ticket = new FormsAuthenticationTicket(
-                1,
-                user.DisplayName,
-                DateTime.Now,
-                DateTime.Now.AddDays(0.5),
-                true,
-                JsonConvert.SerializeObject(user));
-
-            var encryptedTicket = FormsAuthentication.Encrypt(ticket);
-            var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-            Response.Cookies.Add(authCookie);
-
-            return this.RedirectToAction<SessionController>(c => c.Index());
+            return this.RedirectToAction<SessionController>(c => c.List());
         }
     }
 }

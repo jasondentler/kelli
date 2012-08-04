@@ -2,14 +2,17 @@
 
 namespace KelliPokerPlanning
 {
-    public class User 
+    public class User
     {
+
+        public const string Moderator = "Moderator";
+        public const string Estimator = "Estimator";
+
         [Flags]
         public enum Roles
         {
-            None = 0,
+            Estimator = 0,
             Moderator = 1,
-            Estimator = 2
         }
 
         public string DisplayName { get; set; }

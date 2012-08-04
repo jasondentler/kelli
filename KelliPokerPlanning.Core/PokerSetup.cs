@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
 
-namespace KelliPokerPlanning.Models
+namespace KelliPokerPlanning
 {
     public class PokerSetup
     {
-        public string TeamName { get; set; }
         public string Values { get; set; }
         public bool IncludeQuestion { get; set; }
         public bool IncludeInfinity { get; set; }

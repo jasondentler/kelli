@@ -17,6 +17,9 @@ namespace KelliPokerPlanning.Specs
         [BeforeTestRun]
         public static void Startup()
         {
+            if (Settings.IsRunningAppHarborTest)
+                return;
+
             _iisProcess = new IISProcess(8082);
             _iisProcess.Start();
             _driver = Settings.CreateWebDriver();
@@ -26,6 +29,9 @@ namespace KelliPokerPlanning.Specs
         [AfterTestRun]
         public static void Shutdown()
         {
+            if (Settings.IsRunningAppHarborTest)
+                return;
+
             _iisProcess.Stop();
             _iisProcess.Dispose();
             _driver.Dispose();
@@ -34,7 +40,7 @@ namespace KelliPokerPlanning.Specs
         [BeforeScenario("web")]
         public void Setup()
         {
-            if (Settings.Environment == "Test")
+            if (Settings.IsRunningAppHarborTest)
             {
                 Assert.Ignore();
                 return;

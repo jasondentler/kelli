@@ -40,6 +40,8 @@ namespace KelliPokerPlanning.Specs
 
         public static string Environment { get { return GetValue(EnvironmentKey) ?? "Development"; } }
 
+        public static bool IsRunningAppHarborTest { get { return Environment == "Test"; }}
+
         public static IWebDriver CreateWebDriver()
         {
             var name = GetValue(BrowserKey);

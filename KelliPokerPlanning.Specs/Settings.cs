@@ -20,6 +20,7 @@ namespace KelliPokerPlanning.Specs
         private const string BrowserKey = "Browser";
         private const string ChromeExecutableKey = "ChromeExecutable";
         private const string RavenDbExecutablePathKey = "RavenDBExecutablePath";
+        private const string EnvironmentKey = "Environment";
         
         public static string IISExpressPath
         {
@@ -36,6 +37,8 @@ namespace KelliPokerPlanning.Specs
         {
             get { return GetValue(RavenDbExecutablePathKey) ?? GetRavenDbServicePath(); }
         }
+
+        public static string Environment { get { return GetValue(EnvironmentKey) ?? "Development"; } }
 
         public static IWebDriver CreateWebDriver()
         {

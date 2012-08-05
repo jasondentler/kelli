@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Configuration;
+using System.Linq;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using TechTalk.SpecFlow;
 
@@ -32,6 +34,12 @@ namespace KelliPokerPlanning.Specs
         [BeforeScenario("web")]
         public void Setup()
         {
+            if (Settings.Environment == "Test")
+            {
+                Assert.Ignore();
+                return;
+            }
+
             ScenarioContext.Current.Set(_driver);
             _mainWindow = _driver.WindowHandles.Contains(_mainWindow)
                               ? _mainWindow
@@ -48,6 +56,7 @@ namespace KelliPokerPlanning.Specs
             _driver.Navigate().GoToUrl("about:blank");
             _driver.Manage().Cookies.DeleteAllCookies();
         }
-        
+
+
     }
 }
